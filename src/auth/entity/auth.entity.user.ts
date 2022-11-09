@@ -1,3 +1,14 @@
+/**
+ *
+ * The copyright indication and this authorization indication shall be
+ * recorded in all copies or in important parts of the Software.
+ *
+ * @author dev-ys-36
+ * @link https://github.com/dev-ys-36
+ * @license MIT LICENSE
+ *
+ */
+
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity({ name: 'auth' })
