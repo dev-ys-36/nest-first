@@ -9,11 +9,17 @@
  *
  */
 
-import { Body, Controller, Post, Session } from '@nestjs/common'
+import { Body, Controller, Post, Get, Session, UseGuards, Res, Req } from '@nestjs/common'
+import { Response, Request } from 'express'
+import { IsNotEmpty } from 'class-validator'
 import { AuthService } from './auth.service'
+import { KakaoAuthGuard } from './social/auth.social.kakao.guard'
 
-interface authDTO {
+export class authDTO {
+  @IsNotEmpty()
   userid: string
+
+  @IsNotEmpty()
   password: string
 }
 
@@ -23,40 +29,36 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: authDTO): Promise<object> {
-    await this.AuthService.register(body.userid, body.password)
-    return Object.assign({
-      statusCode: 201,
-      message: 'register account.',
-    })
+    return await this.AuthService.register(body.userid, body.password)
   }
 
   @Post('unregister')
   async unregister(@Body() body: authDTO): Promise<object> {
-    await this.AuthService.unregister(body.userid, body.password)
-    return Object.assign({
-      statusCode: 201,
-      message: 'unregister account.',
-    })
+    return await this.AuthService.unregister(body.userid, body.password)
   }
 
   @Post('login')
   async login(@Body() body: authDTO, @Session() session: any): Promise<object> {
-    await this.AuthService.login(body.userid, body.password, session)
-    return Object.assign({
-      statusCode: 201,
-      message: 'logined account.',
-    })
+    return await this.AuthService.login(body.userid, body.password, session)
   }
 
-  @Post('logout')
-  async logout(
-    @Body() body: authDTO,
-    @Session() session: any,
-  ): Promise<object> {
-    await this.AuthService.logout(body.userid, body.password, session)
-    return Object.assign({
-      statusCode: 201,
-      message: 'logouted account.',
-    })
+  @Get('logout')
+  async logout(@Session() session: any): Promise<object> {
+    return await this.AuthService.logout(session)
+  }
+
+  @Get('kakao/login')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoLogin(@Req() req: Request): Promise<any> {}
+
+  @Get('kakao/callback')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoCallback(@Session() session: any, @Req() req: Request): Promise<object> {
+    return await this.AuthService.kakaoCallback(session, req.user)
+  }
+
+  @Get('kakao/logout')
+  async kakaoLogout(@Session() session: any): Promise<object> {
+    return await this.AuthService.kakaoLogout(session)
   }
 }

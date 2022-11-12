@@ -11,9 +11,11 @@
 
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { HttpModule } from '@nestjs/axios'
 import { AuthController } from './auth/auth.controller'
 import { AuthService } from './auth/auth.service'
 import { AuthUser } from './auth/entity/auth.entity.user'
+import { KakaoStrategy } from './auth/social/auth.social.kakao.strategy'
 
 @Module({
   imports: [
@@ -28,8 +30,12 @@ import { AuthUser } from './auth/entity/auth.entity.user'
       synchronize: false,
     }),
     TypeOrmModule.forFeature([AuthUser]),
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+    }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, KakaoStrategy],
 })
 export class AppModule {}
