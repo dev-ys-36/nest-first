@@ -11,20 +11,19 @@
 
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy } from 'passport-kakao'
+import { ExtractJwt, Strategy } from 'passport-jwt'
 
 @Injectable()
-export class KakaoStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      clientID: '220de28dc17371d455e627e1f440924c',
-      clientSecret: '',
-      callbackURL: '/auth/kakao/callback',
-      passReqToCallback: true,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: 'dev-ys-36',
     })
   }
 
-  async validate(req: any, accessToken: string, refreshToken: string, profile: any, done: any) {
-    done(null, { token: accessToken })
+  async validate(payload: any) {
+    return { userId: payload.id }
   }
 }

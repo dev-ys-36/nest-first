@@ -9,8 +9,12 @@
  *
  */
 
-import { Injectable } from '@nestjs/common'
-import { AuthGuard } from '@nestjs/passport'
+import { IsNotEmpty } from 'class-validator'
 
-@Injectable()
-export class KakaoAuthGuard extends AuthGuard('kakao') {}
+export class AuthBody {
+  @IsNotEmpty()
+  userid: string
+
+  @IsNotEmpty()
+  password: string
+}

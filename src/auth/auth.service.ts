@@ -10,9 +10,10 @@
  */
 
 import { HttpService } from '@nestjs/axios'
-import { map, tap, catchError } from 'rxjs/operators'
-import { Observable, throwError, lastValueFrom } from 'rxjs'
+import { AxiosResponse, AxiosError } from 'axios'
+import { lastValueFrom } from 'rxjs'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { AuthUser } from './entity/auth.entity.user'
@@ -23,6 +24,7 @@ export class AuthService {
     @InjectRepository(AuthUser)
     private readonly userRepository: Repository<AuthUser>,
     private readonly HttpService: HttpService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(userid: string, password: string): Promise<object> {
@@ -54,9 +56,9 @@ export class AuthService {
   }
 
   async login(userid: string, password: string, session: any): Promise<object> {
-    if (session.loginStatus) {
+    /*if (session.loginStatus) {
       throw new UnauthorizedException('logined.')
-    }
+    }*/
     const registerUser = await this.userRepository.findOne({
       where: { userid, password },
     })
@@ -65,9 +67,11 @@ export class AuthService {
     }
     session.loginStatus = true
     session.user = registerUser
+    const payload = { id: registerUser.id }
     return {
       statusCode: 201,
       message: 'logined account.',
+      access_token: this.jwtService.sign(payload),
     }
   }
 
@@ -90,16 +94,19 @@ export class AuthService {
     }
   }
 
-  /**
-   * issue, not solved.
-   */
   async kakaoLogout(session: any): Promise<object> {
-    let test = await this.HttpService.post('https://kapi.kakao.com/v1/user/unlink', null, {
+    const kapi = this.HttpService.post('https://kapi.kakao.com/v1/user/unlink', null, {
       headers: {
         Authorization: 'Bearer ' + session.token,
       },
     })
-    console.log(lastValueFrom(test))
+    await lastValueFrom(kapi)
+      .then((response: AxiosResponse) => {
+        console.log(response.data)
+      })
+      .catch((error: AxiosError) => {
+        console.log(error.response.data)
+      })
     session.destroy()
     return {
       statusCode: 201,

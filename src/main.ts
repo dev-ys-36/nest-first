@@ -25,7 +25,7 @@ async function bootstrap(): Promise<void> {
   )
   app.use(
     session({
-      secret: 'nest-first',
+      secret: 'dev-ys-36',
       resave: true,
       saveUninitialized: false,
     }),
