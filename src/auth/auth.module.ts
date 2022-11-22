@@ -8,12 +8,12 @@
  * @license MIT LICENSE
  *
  */
-
-import { Module } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { PassportModule } from '@nestjs/passport'
-import { JwtModule } from '@nestjs/jwt'
 import { HttpModule } from '@nestjs/axios'
+import { Module } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
+import { PassportModule } from '@nestjs/passport'
+import { TypeOrmModule } from '@nestjs/typeorm'
+
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 import { AuthUser } from './entity/auth.entity.user'

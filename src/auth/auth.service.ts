@@ -8,14 +8,13 @@
  * @license MIT LICENSE
  *
  */
-
-import { HttpService } from '@nestjs/axios'
-import { AxiosResponse, AxiosError } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { lastValueFrom } from 'rxjs'
+import { Repository } from 'typeorm'
+import { HttpService } from '@nestjs/axios'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import { AuthUser } from './entity/auth.entity.user'
 
 @Injectable()

@@ -8,7 +8,6 @@
  * @license MIT LICENSE
  *
  */
-
 import { IsNotEmpty } from 'class-validator'
 
 export class AuthBody {
